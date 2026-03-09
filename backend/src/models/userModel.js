@@ -1,27 +1,46 @@
-const mongoose = require('mongoose');
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
+import mongoose from 'mongoose';
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
 
 const userSchema = new mongoose.Schema({
   name: { type: String, required: true },
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
-  refreshToken: { type: String }, // Refresh token store karne ke liye
+  refreshToken: { type: String },
 }, { timestamps: true });
 
-// Password hash karne ka logic before saving
-userSchema.pre('save', async function(next) {
-  if (!this.isModified('password')) return next();
-  this.password = await bcrypt.hash(this.password, 10);
+// Corrected pre-save hook for ESM and Async/Await
+userSchema.pre('save', async function () {
+  // Agar password modify nahi hua (jaise login ke waqt refresh token save ho raha ho)
+  if (!this.isModified('password')) return;
+
+  // Agar password naya hai ya change hua hai
+  try {
+    const salt = await bcrypt.genSalt(10);
+    this.password = await bcrypt.hash(this.password, salt);
+  } catch (error) {
+    throw error;
+  }
 });
 
-// Methods to generate tokens
-userSchema.methods.generateAccessToken = function() {
-  return jwt.sign({ id: this._id }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '15m' });
+userSchema.methods.isPasswordCorrect = async function (password) {
+  return await bcrypt.compare(password, this.password);
 };
 
-userSchema.methods.generateRefreshToken = function() {
-  return jwt.sign({ id: this._id }, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '7d' });
+userSchema.methods.generateAccessToken = function () {
+  return jwt.sign(
+    { id: this._id }, 
+    process.env.ACCESS_TOKEN_SECRET, 
+    { expiresIn: '15m' }
+  );
 };
 
-module.exports = mongoose.model('User', userSchema);
+userSchema.methods.generateRefreshToken = function () {
+  return jwt.sign(
+    { id: this._id }, 
+    process.env.REFRESH_TOKEN_SECRET, 
+    { expiresIn: '7d' }
+  );
+};
+
+export const User = mongoose.model('User', userSchema);

@@ -1,4 +1,5 @@
-const express = require('express');
+import express from 'express';
+
 const app = express();
 
 // Middlewares
@@ -6,10 +7,13 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Routes
-// app.use('/api/users', require('./routes/userRoutes'));
-// app.use('/api/products', require('./routes/productRoutes'));
+// import userRoutes from './routes/userRoutes.js';
+// import productRoutes from './routes/productRoutes.js';
+// app.use('/api/users', userRoutes);
+// app.use('/api/products', productRoutes);
 
 // Error handling middleware
-// app.use(require('./middlewares/errorHandler'));
+// import errorMiddleware from './middlewares/errorMiddleware.js';
+// app.use(errorMiddleware);
 
-module.exports = app;
+export default app;
