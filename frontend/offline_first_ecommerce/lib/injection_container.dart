@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 import 'package:isar/isar.dart';
 import 'package:offline_first_ecommerce/core/service/token_service.dart';
+import 'package:offline_first_ecommerce/features/product/data/models/cart_model.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 
@@ -20,7 +21,7 @@ Future<void> init() async {
   // 1. External & Core
   final dir = await getApplicationDocumentsDirectory();
   final isar = await Isar.open(
-    [ProductModelSchema], // Generated from .g.dart
+    [ProductModelSchema, CartItemSchema], // Generated from .g.dart
     directory: dir.path,
   );
   sl.registerSingleton<Isar>(isar);
