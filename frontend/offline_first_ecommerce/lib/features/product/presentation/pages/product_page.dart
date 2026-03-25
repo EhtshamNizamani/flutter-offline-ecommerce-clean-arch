@@ -1,6 +1,9 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:offline_first_ecommerce/features/cart/domain/entities/cart_item.dart';
+import 'package:offline_first_ecommerce/features/cart/presentation/bloc/cart_bloc.dart';
+import 'package:offline_first_ecommerce/features/cart/presentation/bloc/cart_event.dart';
 import 'package:offline_first_ecommerce/features/product/presentation/bloc/product_bloc.dart';
 import 'package:offline_first_ecommerce/features/product/presentation/bloc/product_event.dart';
 import 'package:offline_first_ecommerce/features/product/presentation/bloc/product_state.dart';
@@ -18,7 +21,7 @@ class ProductPage extends StatelessWidget {
           title: const Text('Shop Online/Offline'),
           actions: [
             // Ek indicator dikhana ke app offline hai ya online (Optional but Cool)
-            const Icon(Icons.wifi_off, color: Colors.grey, size: 18), 
+            const Icon(Icons.wifi_off, color: Colors.grey, size: 18),
             const SizedBox(width: 10),
           ],
         ),
@@ -51,12 +54,28 @@ class ProductPage extends StatelessWidget {
                           errorWidget: (c, e, s) => const Icon(Icons.error),
                         ),
                       ),
-                      title: Text(product.name, style: const TextStyle(fontWeight: FontWeight.bold)),
+                      title: Text(
+                        product.name,
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
                       subtitle: Text('\$${product.price}'),
                       trailing: IconButton(
                         icon: const Icon(Icons.add_shopping_cart),
                         onPressed: () {
-                          // TODO: Add to Cart Logic
+                          context.read<CartBloc>().add(
+                            AddToCart(
+                              CartItem(
+                                productId: product.id,
+                                name: product.name,
+                                price: product.price,
+                                image: product.image,
+                                quantity: 1,
+                              ),
+                            ),
+                          );
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text("Added to Cart")),
+                          );
                         },
                       ),
                     );

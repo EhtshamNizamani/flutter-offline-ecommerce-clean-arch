@@ -9,13 +9,13 @@ part of 'cart_model.dart';
 // coverage:ignore-file
 // ignore_for_file: duplicate_ignore, non_constant_identifier_names, constant_identifier_names, invalid_use_of_protected_member, unnecessary_cast, prefer_const_constructors, lines_longer_than_80_chars, require_trailing_commas, inference_failure_on_function_invocation, unnecessary_parenthesis, unnecessary_raw_strings, unnecessary_null_checks, join_return_with_assignment, prefer_final_locals, avoid_js_rounded_ints, avoid_positional_boolean_parameters, always_specify_types
 
-extension GetCartItemCollection on Isar {
-  IsarCollection<CartItem> get cartItems => this.collection();
+extension GetCartItemModelCollection on Isar {
+  IsarCollection<CartItemModel> get cartItemModels => this.collection();
 }
 
-const CartItemSchema = CollectionSchema(
-  name: r'CartItem',
-  id: -8381127435096147183,
+const CartItemModelSchema = CollectionSchema(
+  name: r'CartItemModel',
+  id: 7298597921153205552,
   properties: {
     r'image': PropertySchema(
       id: 0,
@@ -35,49 +35,44 @@ const CartItemSchema = CollectionSchema(
     r'productId': PropertySchema(
       id: 3,
       name: r'productId',
-      type: IsarType.long,
+      type: IsarType.string,
     ),
     r'quantity': PropertySchema(
       id: 4,
       name: r'quantity',
       type: IsarType.long,
-    ),
-    r'totalPrice': PropertySchema(
-      id: 5,
-      name: r'totalPrice',
-      type: IsarType.double,
     )
   },
-  estimateSize: _cartItemEstimateSize,
-  serialize: _cartItemSerialize,
-  deserialize: _cartItemDeserialize,
-  deserializeProp: _cartItemDeserializeProp,
+  estimateSize: _cartItemModelEstimateSize,
+  serialize: _cartItemModelSerialize,
+  deserialize: _cartItemModelDeserialize,
+  deserializeProp: _cartItemModelDeserializeProp,
   idName: r'id',
   indexes: {
     r'productId': IndexSchema(
       id: 5580769080710688203,
       name: r'productId',
       unique: true,
-      replace: false,
+      replace: true,
       properties: [
         IndexPropertySchema(
           name: r'productId',
-          type: IndexType.value,
-          caseSensitive: false,
+          type: IndexType.hash,
+          caseSensitive: true,
         )
       ],
     )
   },
   links: {},
   embeddedSchemas: {},
-  getId: _cartItemGetId,
-  getLinks: _cartItemGetLinks,
-  attach: _cartItemAttach,
+  getId: _cartItemModelGetId,
+  getLinks: _cartItemModelGetLinks,
+  attach: _cartItemModelAttach,
   version: '3.1.0+1',
 );
 
-int _cartItemEstimateSize(
-  CartItem object,
+int _cartItemModelEstimateSize(
+  CartItemModel object,
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
@@ -94,11 +89,17 @@ int _cartItemEstimateSize(
       bytesCount += 3 + value.length * 3;
     }
   }
+  {
+    final value = object.productId;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
   return bytesCount;
 }
 
-void _cartItemSerialize(
-  CartItem object,
+void _cartItemModelSerialize(
+  CartItemModel object,
   IsarWriter writer,
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
@@ -106,28 +107,27 @@ void _cartItemSerialize(
   writer.writeString(offsets[0], object.image);
   writer.writeString(offsets[1], object.name);
   writer.writeDouble(offsets[2], object.price);
-  writer.writeLong(offsets[3], object.productId);
+  writer.writeString(offsets[3], object.productId);
   writer.writeLong(offsets[4], object.quantity);
-  writer.writeDouble(offsets[5], object.totalPrice);
 }
 
-CartItem _cartItemDeserialize(
+CartItemModel _cartItemModelDeserialize(
   Id id,
   IsarReader reader,
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
-  final object = CartItem();
+  final object = CartItemModel();
   object.id = id;
   object.image = reader.readStringOrNull(offsets[0]);
   object.name = reader.readStringOrNull(offsets[1]);
   object.price = reader.readDoubleOrNull(offsets[2]);
-  object.productId = reader.readLongOrNull(offsets[3]);
+  object.productId = reader.readStringOrNull(offsets[3]);
   object.quantity = reader.readLong(offsets[4]);
   return object;
 }
 
-P _cartItemDeserializeProp<P>(
+P _cartItemModelDeserializeProp<P>(
   IsarReader reader,
   int propertyId,
   int offset,
@@ -141,101 +141,96 @@ P _cartItemDeserializeProp<P>(
     case 2:
       return (reader.readDoubleOrNull(offset)) as P;
     case 3:
-      return (reader.readLongOrNull(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 4:
       return (reader.readLong(offset)) as P;
-    case 5:
-      return (reader.readDouble(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
   }
 }
 
-Id _cartItemGetId(CartItem object) {
+Id _cartItemModelGetId(CartItemModel object) {
   return object.id;
 }
 
-List<IsarLinkBase<dynamic>> _cartItemGetLinks(CartItem object) {
+List<IsarLinkBase<dynamic>> _cartItemModelGetLinks(CartItemModel object) {
   return [];
 }
 
-void _cartItemAttach(IsarCollection<dynamic> col, Id id, CartItem object) {
+void _cartItemModelAttach(
+    IsarCollection<dynamic> col, Id id, CartItemModel object) {
   object.id = id;
 }
 
-extension CartItemByIndex on IsarCollection<CartItem> {
-  Future<CartItem?> getByProductId(int? productId) {
+extension CartItemModelByIndex on IsarCollection<CartItemModel> {
+  Future<CartItemModel?> getByProductId(String? productId) {
     return getByIndex(r'productId', [productId]);
   }
 
-  CartItem? getByProductIdSync(int? productId) {
+  CartItemModel? getByProductIdSync(String? productId) {
     return getByIndexSync(r'productId', [productId]);
   }
 
-  Future<bool> deleteByProductId(int? productId) {
+  Future<bool> deleteByProductId(String? productId) {
     return deleteByIndex(r'productId', [productId]);
   }
 
-  bool deleteByProductIdSync(int? productId) {
+  bool deleteByProductIdSync(String? productId) {
     return deleteByIndexSync(r'productId', [productId]);
   }
 
-  Future<List<CartItem?>> getAllByProductId(List<int?> productIdValues) {
+  Future<List<CartItemModel?>> getAllByProductId(
+      List<String?> productIdValues) {
     final values = productIdValues.map((e) => [e]).toList();
     return getAllByIndex(r'productId', values);
   }
 
-  List<CartItem?> getAllByProductIdSync(List<int?> productIdValues) {
+  List<CartItemModel?> getAllByProductIdSync(List<String?> productIdValues) {
     final values = productIdValues.map((e) => [e]).toList();
     return getAllByIndexSync(r'productId', values);
   }
 
-  Future<int> deleteAllByProductId(List<int?> productIdValues) {
+  Future<int> deleteAllByProductId(List<String?> productIdValues) {
     final values = productIdValues.map((e) => [e]).toList();
     return deleteAllByIndex(r'productId', values);
   }
 
-  int deleteAllByProductIdSync(List<int?> productIdValues) {
+  int deleteAllByProductIdSync(List<String?> productIdValues) {
     final values = productIdValues.map((e) => [e]).toList();
     return deleteAllByIndexSync(r'productId', values);
   }
 
-  Future<Id> putByProductId(CartItem object) {
+  Future<Id> putByProductId(CartItemModel object) {
     return putByIndex(r'productId', object);
   }
 
-  Id putByProductIdSync(CartItem object, {bool saveLinks = true}) {
+  Id putByProductIdSync(CartItemModel object, {bool saveLinks = true}) {
     return putByIndexSync(r'productId', object, saveLinks: saveLinks);
   }
 
-  Future<List<Id>> putAllByProductId(List<CartItem> objects) {
+  Future<List<Id>> putAllByProductId(List<CartItemModel> objects) {
     return putAllByIndex(r'productId', objects);
   }
 
-  List<Id> putAllByProductIdSync(List<CartItem> objects,
+  List<Id> putAllByProductIdSync(List<CartItemModel> objects,
       {bool saveLinks = true}) {
     return putAllByIndexSync(r'productId', objects, saveLinks: saveLinks);
   }
 }
 
-extension CartItemQueryWhereSort on QueryBuilder<CartItem, CartItem, QWhere> {
-  QueryBuilder<CartItem, CartItem, QAfterWhere> anyId() {
+extension CartItemModelQueryWhereSort
+    on QueryBuilder<CartItemModel, CartItemModel, QWhere> {
+  QueryBuilder<CartItemModel, CartItemModel, QAfterWhere> anyId() {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(const IdWhereClause.any());
     });
   }
-
-  QueryBuilder<CartItem, CartItem, QAfterWhere> anyProductId() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(
-        const IndexWhereClause.any(indexName: r'productId'),
-      );
-    });
-  }
 }
 
-extension CartItemQueryWhere on QueryBuilder<CartItem, CartItem, QWhereClause> {
-  QueryBuilder<CartItem, CartItem, QAfterWhereClause> idEqualTo(Id id) {
+extension CartItemModelQueryWhere
+    on QueryBuilder<CartItemModel, CartItemModel, QWhereClause> {
+  QueryBuilder<CartItemModel, CartItemModel, QAfterWhereClause> idEqualTo(
+      Id id) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(IdWhereClause.between(
         lower: id,
@@ -244,7 +239,8 @@ extension CartItemQueryWhere on QueryBuilder<CartItem, CartItem, QWhereClause> {
     });
   }
 
-  QueryBuilder<CartItem, CartItem, QAfterWhereClause> idNotEqualTo(Id id) {
+  QueryBuilder<CartItemModel, CartItemModel, QAfterWhereClause> idNotEqualTo(
+      Id id) {
     return QueryBuilder.apply(this, (query) {
       if (query.whereSort == Sort.asc) {
         return query
@@ -266,7 +262,8 @@ extension CartItemQueryWhere on QueryBuilder<CartItem, CartItem, QWhereClause> {
     });
   }
 
-  QueryBuilder<CartItem, CartItem, QAfterWhereClause> idGreaterThan(Id id,
+  QueryBuilder<CartItemModel, CartItemModel, QAfterWhereClause> idGreaterThan(
+      Id id,
       {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(
@@ -275,7 +272,8 @@ extension CartItemQueryWhere on QueryBuilder<CartItem, CartItem, QWhereClause> {
     });
   }
 
-  QueryBuilder<CartItem, CartItem, QAfterWhereClause> idLessThan(Id id,
+  QueryBuilder<CartItemModel, CartItemModel, QAfterWhereClause> idLessThan(
+      Id id,
       {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(
@@ -284,7 +282,7 @@ extension CartItemQueryWhere on QueryBuilder<CartItem, CartItem, QWhereClause> {
     });
   }
 
-  QueryBuilder<CartItem, CartItem, QAfterWhereClause> idBetween(
+  QueryBuilder<CartItemModel, CartItemModel, QAfterWhereClause> idBetween(
     Id lowerId,
     Id upperId, {
     bool includeLower = true,
@@ -300,7 +298,8 @@ extension CartItemQueryWhere on QueryBuilder<CartItem, CartItem, QWhereClause> {
     });
   }
 
-  QueryBuilder<CartItem, CartItem, QAfterWhereClause> productIdIsNull() {
+  QueryBuilder<CartItemModel, CartItemModel, QAfterWhereClause>
+      productIdIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(IndexWhereClause.equalTo(
         indexName: r'productId',
@@ -309,7 +308,8 @@ extension CartItemQueryWhere on QueryBuilder<CartItem, CartItem, QWhereClause> {
     });
   }
 
-  QueryBuilder<CartItem, CartItem, QAfterWhereClause> productIdIsNotNull() {
+  QueryBuilder<CartItemModel, CartItemModel, QAfterWhereClause>
+      productIdIsNotNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(IndexWhereClause.between(
         indexName: r'productId',
@@ -320,8 +320,8 @@ extension CartItemQueryWhere on QueryBuilder<CartItem, CartItem, QWhereClause> {
     });
   }
 
-  QueryBuilder<CartItem, CartItem, QAfterWhereClause> productIdEqualTo(
-      int? productId) {
+  QueryBuilder<CartItemModel, CartItemModel, QAfterWhereClause>
+      productIdEqualTo(String? productId) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(IndexWhereClause.equalTo(
         indexName: r'productId',
@@ -330,8 +330,8 @@ extension CartItemQueryWhere on QueryBuilder<CartItem, CartItem, QWhereClause> {
     });
   }
 
-  QueryBuilder<CartItem, CartItem, QAfterWhereClause> productIdNotEqualTo(
-      int? productId) {
+  QueryBuilder<CartItemModel, CartItemModel, QAfterWhereClause>
+      productIdNotEqualTo(String? productId) {
     return QueryBuilder.apply(this, (query) {
       if (query.whereSort == Sort.asc) {
         return query
@@ -364,56 +364,12 @@ extension CartItemQueryWhere on QueryBuilder<CartItem, CartItem, QWhereClause> {
       }
     });
   }
-
-  QueryBuilder<CartItem, CartItem, QAfterWhereClause> productIdGreaterThan(
-    int? productId, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IndexWhereClause.between(
-        indexName: r'productId',
-        lower: [productId],
-        includeLower: include,
-        upper: [],
-      ));
-    });
-  }
-
-  QueryBuilder<CartItem, CartItem, QAfterWhereClause> productIdLessThan(
-    int? productId, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IndexWhereClause.between(
-        indexName: r'productId',
-        lower: [],
-        upper: [productId],
-        includeUpper: include,
-      ));
-    });
-  }
-
-  QueryBuilder<CartItem, CartItem, QAfterWhereClause> productIdBetween(
-    int? lowerProductId,
-    int? upperProductId, {
-    bool includeLower = true,
-    bool includeUpper = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IndexWhereClause.between(
-        indexName: r'productId',
-        lower: [lowerProductId],
-        includeLower: includeLower,
-        upper: [upperProductId],
-        includeUpper: includeUpper,
-      ));
-    });
-  }
 }
 
-extension CartItemQueryFilter
-    on QueryBuilder<CartItem, CartItem, QFilterCondition> {
-  QueryBuilder<CartItem, CartItem, QAfterFilterCondition> idEqualTo(Id value) {
+extension CartItemModelQueryFilter
+    on QueryBuilder<CartItemModel, CartItemModel, QFilterCondition> {
+  QueryBuilder<CartItemModel, CartItemModel, QAfterFilterCondition> idEqualTo(
+      Id value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'id',
@@ -422,7 +378,8 @@ extension CartItemQueryFilter
     });
   }
 
-  QueryBuilder<CartItem, CartItem, QAfterFilterCondition> idGreaterThan(
+  QueryBuilder<CartItemModel, CartItemModel, QAfterFilterCondition>
+      idGreaterThan(
     Id value, {
     bool include = false,
   }) {
@@ -435,7 +392,7 @@ extension CartItemQueryFilter
     });
   }
 
-  QueryBuilder<CartItem, CartItem, QAfterFilterCondition> idLessThan(
+  QueryBuilder<CartItemModel, CartItemModel, QAfterFilterCondition> idLessThan(
     Id value, {
     bool include = false,
   }) {
@@ -448,7 +405,7 @@ extension CartItemQueryFilter
     });
   }
 
-  QueryBuilder<CartItem, CartItem, QAfterFilterCondition> idBetween(
+  QueryBuilder<CartItemModel, CartItemModel, QAfterFilterCondition> idBetween(
     Id lower,
     Id upper, {
     bool includeLower = true,
@@ -465,7 +422,8 @@ extension CartItemQueryFilter
     });
   }
 
-  QueryBuilder<CartItem, CartItem, QAfterFilterCondition> imageIsNull() {
+  QueryBuilder<CartItemModel, CartItemModel, QAfterFilterCondition>
+      imageIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
         property: r'image',
@@ -473,7 +431,8 @@ extension CartItemQueryFilter
     });
   }
 
-  QueryBuilder<CartItem, CartItem, QAfterFilterCondition> imageIsNotNull() {
+  QueryBuilder<CartItemModel, CartItemModel, QAfterFilterCondition>
+      imageIsNotNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNotNull(
         property: r'image',
@@ -481,7 +440,8 @@ extension CartItemQueryFilter
     });
   }
 
-  QueryBuilder<CartItem, CartItem, QAfterFilterCondition> imageEqualTo(
+  QueryBuilder<CartItemModel, CartItemModel, QAfterFilterCondition>
+      imageEqualTo(
     String? value, {
     bool caseSensitive = true,
   }) {
@@ -494,7 +454,8 @@ extension CartItemQueryFilter
     });
   }
 
-  QueryBuilder<CartItem, CartItem, QAfterFilterCondition> imageGreaterThan(
+  QueryBuilder<CartItemModel, CartItemModel, QAfterFilterCondition>
+      imageGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
@@ -509,7 +470,8 @@ extension CartItemQueryFilter
     });
   }
 
-  QueryBuilder<CartItem, CartItem, QAfterFilterCondition> imageLessThan(
+  QueryBuilder<CartItemModel, CartItemModel, QAfterFilterCondition>
+      imageLessThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
@@ -524,7 +486,8 @@ extension CartItemQueryFilter
     });
   }
 
-  QueryBuilder<CartItem, CartItem, QAfterFilterCondition> imageBetween(
+  QueryBuilder<CartItemModel, CartItemModel, QAfterFilterCondition>
+      imageBetween(
     String? lower,
     String? upper, {
     bool includeLower = true,
@@ -543,7 +506,8 @@ extension CartItemQueryFilter
     });
   }
 
-  QueryBuilder<CartItem, CartItem, QAfterFilterCondition> imageStartsWith(
+  QueryBuilder<CartItemModel, CartItemModel, QAfterFilterCondition>
+      imageStartsWith(
     String value, {
     bool caseSensitive = true,
   }) {
@@ -556,7 +520,8 @@ extension CartItemQueryFilter
     });
   }
 
-  QueryBuilder<CartItem, CartItem, QAfterFilterCondition> imageEndsWith(
+  QueryBuilder<CartItemModel, CartItemModel, QAfterFilterCondition>
+      imageEndsWith(
     String value, {
     bool caseSensitive = true,
   }) {
@@ -569,9 +534,8 @@ extension CartItemQueryFilter
     });
   }
 
-  QueryBuilder<CartItem, CartItem, QAfterFilterCondition> imageContains(
-      String value,
-      {bool caseSensitive = true}) {
+  QueryBuilder<CartItemModel, CartItemModel, QAfterFilterCondition>
+      imageContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.contains(
         property: r'image',
@@ -581,9 +545,8 @@ extension CartItemQueryFilter
     });
   }
 
-  QueryBuilder<CartItem, CartItem, QAfterFilterCondition> imageMatches(
-      String pattern,
-      {bool caseSensitive = true}) {
+  QueryBuilder<CartItemModel, CartItemModel, QAfterFilterCondition>
+      imageMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.matches(
         property: r'image',
@@ -593,7 +556,8 @@ extension CartItemQueryFilter
     });
   }
 
-  QueryBuilder<CartItem, CartItem, QAfterFilterCondition> imageIsEmpty() {
+  QueryBuilder<CartItemModel, CartItemModel, QAfterFilterCondition>
+      imageIsEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'image',
@@ -602,7 +566,8 @@ extension CartItemQueryFilter
     });
   }
 
-  QueryBuilder<CartItem, CartItem, QAfterFilterCondition> imageIsNotEmpty() {
+  QueryBuilder<CartItemModel, CartItemModel, QAfterFilterCondition>
+      imageIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         property: r'image',
@@ -611,7 +576,8 @@ extension CartItemQueryFilter
     });
   }
 
-  QueryBuilder<CartItem, CartItem, QAfterFilterCondition> nameIsNull() {
+  QueryBuilder<CartItemModel, CartItemModel, QAfterFilterCondition>
+      nameIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
         property: r'name',
@@ -619,7 +585,8 @@ extension CartItemQueryFilter
     });
   }
 
-  QueryBuilder<CartItem, CartItem, QAfterFilterCondition> nameIsNotNull() {
+  QueryBuilder<CartItemModel, CartItemModel, QAfterFilterCondition>
+      nameIsNotNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNotNull(
         property: r'name',
@@ -627,7 +594,7 @@ extension CartItemQueryFilter
     });
   }
 
-  QueryBuilder<CartItem, CartItem, QAfterFilterCondition> nameEqualTo(
+  QueryBuilder<CartItemModel, CartItemModel, QAfterFilterCondition> nameEqualTo(
     String? value, {
     bool caseSensitive = true,
   }) {
@@ -640,7 +607,8 @@ extension CartItemQueryFilter
     });
   }
 
-  QueryBuilder<CartItem, CartItem, QAfterFilterCondition> nameGreaterThan(
+  QueryBuilder<CartItemModel, CartItemModel, QAfterFilterCondition>
+      nameGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
@@ -655,7 +623,8 @@ extension CartItemQueryFilter
     });
   }
 
-  QueryBuilder<CartItem, CartItem, QAfterFilterCondition> nameLessThan(
+  QueryBuilder<CartItemModel, CartItemModel, QAfterFilterCondition>
+      nameLessThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
@@ -670,7 +639,7 @@ extension CartItemQueryFilter
     });
   }
 
-  QueryBuilder<CartItem, CartItem, QAfterFilterCondition> nameBetween(
+  QueryBuilder<CartItemModel, CartItemModel, QAfterFilterCondition> nameBetween(
     String? lower,
     String? upper, {
     bool includeLower = true,
@@ -689,7 +658,8 @@ extension CartItemQueryFilter
     });
   }
 
-  QueryBuilder<CartItem, CartItem, QAfterFilterCondition> nameStartsWith(
+  QueryBuilder<CartItemModel, CartItemModel, QAfterFilterCondition>
+      nameStartsWith(
     String value, {
     bool caseSensitive = true,
   }) {
@@ -702,7 +672,8 @@ extension CartItemQueryFilter
     });
   }
 
-  QueryBuilder<CartItem, CartItem, QAfterFilterCondition> nameEndsWith(
+  QueryBuilder<CartItemModel, CartItemModel, QAfterFilterCondition>
+      nameEndsWith(
     String value, {
     bool caseSensitive = true,
   }) {
@@ -715,9 +686,8 @@ extension CartItemQueryFilter
     });
   }
 
-  QueryBuilder<CartItem, CartItem, QAfterFilterCondition> nameContains(
-      String value,
-      {bool caseSensitive = true}) {
+  QueryBuilder<CartItemModel, CartItemModel, QAfterFilterCondition>
+      nameContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.contains(
         property: r'name',
@@ -727,7 +697,7 @@ extension CartItemQueryFilter
     });
   }
 
-  QueryBuilder<CartItem, CartItem, QAfterFilterCondition> nameMatches(
+  QueryBuilder<CartItemModel, CartItemModel, QAfterFilterCondition> nameMatches(
       String pattern,
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
@@ -739,7 +709,8 @@ extension CartItemQueryFilter
     });
   }
 
-  QueryBuilder<CartItem, CartItem, QAfterFilterCondition> nameIsEmpty() {
+  QueryBuilder<CartItemModel, CartItemModel, QAfterFilterCondition>
+      nameIsEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'name',
@@ -748,7 +719,8 @@ extension CartItemQueryFilter
     });
   }
 
-  QueryBuilder<CartItem, CartItem, QAfterFilterCondition> nameIsNotEmpty() {
+  QueryBuilder<CartItemModel, CartItemModel, QAfterFilterCondition>
+      nameIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         property: r'name',
@@ -757,7 +729,8 @@ extension CartItemQueryFilter
     });
   }
 
-  QueryBuilder<CartItem, CartItem, QAfterFilterCondition> priceIsNull() {
+  QueryBuilder<CartItemModel, CartItemModel, QAfterFilterCondition>
+      priceIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
         property: r'price',
@@ -765,7 +738,8 @@ extension CartItemQueryFilter
     });
   }
 
-  QueryBuilder<CartItem, CartItem, QAfterFilterCondition> priceIsNotNull() {
+  QueryBuilder<CartItemModel, CartItemModel, QAfterFilterCondition>
+      priceIsNotNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNotNull(
         property: r'price',
@@ -773,7 +747,8 @@ extension CartItemQueryFilter
     });
   }
 
-  QueryBuilder<CartItem, CartItem, QAfterFilterCondition> priceEqualTo(
+  QueryBuilder<CartItemModel, CartItemModel, QAfterFilterCondition>
+      priceEqualTo(
     double? value, {
     double epsilon = Query.epsilon,
   }) {
@@ -786,7 +761,8 @@ extension CartItemQueryFilter
     });
   }
 
-  QueryBuilder<CartItem, CartItem, QAfterFilterCondition> priceGreaterThan(
+  QueryBuilder<CartItemModel, CartItemModel, QAfterFilterCondition>
+      priceGreaterThan(
     double? value, {
     bool include = false,
     double epsilon = Query.epsilon,
@@ -801,7 +777,8 @@ extension CartItemQueryFilter
     });
   }
 
-  QueryBuilder<CartItem, CartItem, QAfterFilterCondition> priceLessThan(
+  QueryBuilder<CartItemModel, CartItemModel, QAfterFilterCondition>
+      priceLessThan(
     double? value, {
     bool include = false,
     double epsilon = Query.epsilon,
@@ -816,7 +793,8 @@ extension CartItemQueryFilter
     });
   }
 
-  QueryBuilder<CartItem, CartItem, QAfterFilterCondition> priceBetween(
+  QueryBuilder<CartItemModel, CartItemModel, QAfterFilterCondition>
+      priceBetween(
     double? lower,
     double? upper, {
     bool includeLower = true,
@@ -835,7 +813,8 @@ extension CartItemQueryFilter
     });
   }
 
-  QueryBuilder<CartItem, CartItem, QAfterFilterCondition> productIdIsNull() {
+  QueryBuilder<CartItemModel, CartItemModel, QAfterFilterCondition>
+      productIdIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
         property: r'productId',
@@ -843,7 +822,8 @@ extension CartItemQueryFilter
     });
   }
 
-  QueryBuilder<CartItem, CartItem, QAfterFilterCondition> productIdIsNotNull() {
+  QueryBuilder<CartItemModel, CartItemModel, QAfterFilterCondition>
+      productIdIsNotNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNotNull(
         property: r'productId',
@@ -851,47 +831,59 @@ extension CartItemQueryFilter
     });
   }
 
-  QueryBuilder<CartItem, CartItem, QAfterFilterCondition> productIdEqualTo(
-      int? value) {
+  QueryBuilder<CartItemModel, CartItemModel, QAfterFilterCondition>
+      productIdEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'productId',
         value: value,
+        caseSensitive: caseSensitive,
       ));
     });
   }
 
-  QueryBuilder<CartItem, CartItem, QAfterFilterCondition> productIdGreaterThan(
-    int? value, {
+  QueryBuilder<CartItemModel, CartItemModel, QAfterFilterCondition>
+      productIdGreaterThan(
+    String? value, {
     bool include = false,
+    bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         include: include,
         property: r'productId',
         value: value,
+        caseSensitive: caseSensitive,
       ));
     });
   }
 
-  QueryBuilder<CartItem, CartItem, QAfterFilterCondition> productIdLessThan(
-    int? value, {
+  QueryBuilder<CartItemModel, CartItemModel, QAfterFilterCondition>
+      productIdLessThan(
+    String? value, {
     bool include = false,
+    bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.lessThan(
         include: include,
         property: r'productId',
         value: value,
+        caseSensitive: caseSensitive,
       ));
     });
   }
 
-  QueryBuilder<CartItem, CartItem, QAfterFilterCondition> productIdBetween(
-    int? lower,
-    int? upper, {
+  QueryBuilder<CartItemModel, CartItemModel, QAfterFilterCondition>
+      productIdBetween(
+    String? lower,
+    String? upper, {
     bool includeLower = true,
     bool includeUpper = true,
+    bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.between(
@@ -900,12 +892,83 @@ extension CartItemQueryFilter
         includeLower: includeLower,
         upper: upper,
         includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
       ));
     });
   }
 
-  QueryBuilder<CartItem, CartItem, QAfterFilterCondition> quantityEqualTo(
-      int value) {
+  QueryBuilder<CartItemModel, CartItemModel, QAfterFilterCondition>
+      productIdStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'productId',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<CartItemModel, CartItemModel, QAfterFilterCondition>
+      productIdEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'productId',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<CartItemModel, CartItemModel, QAfterFilterCondition>
+      productIdContains(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'productId',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<CartItemModel, CartItemModel, QAfterFilterCondition>
+      productIdMatches(String pattern, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'productId',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<CartItemModel, CartItemModel, QAfterFilterCondition>
+      productIdIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'productId',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<CartItemModel, CartItemModel, QAfterFilterCondition>
+      productIdIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'productId',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<CartItemModel, CartItemModel, QAfterFilterCondition>
+      quantityEqualTo(int value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'quantity',
@@ -914,7 +977,8 @@ extension CartItemQueryFilter
     });
   }
 
-  QueryBuilder<CartItem, CartItem, QAfterFilterCondition> quantityGreaterThan(
+  QueryBuilder<CartItemModel, CartItemModel, QAfterFilterCondition>
+      quantityGreaterThan(
     int value, {
     bool include = false,
   }) {
@@ -927,7 +991,8 @@ extension CartItemQueryFilter
     });
   }
 
-  QueryBuilder<CartItem, CartItem, QAfterFilterCondition> quantityLessThan(
+  QueryBuilder<CartItemModel, CartItemModel, QAfterFilterCondition>
+      quantityLessThan(
     int value, {
     bool include = false,
   }) {
@@ -940,7 +1005,8 @@ extension CartItemQueryFilter
     });
   }
 
-  QueryBuilder<CartItem, CartItem, QAfterFilterCondition> quantityBetween(
+  QueryBuilder<CartItemModel, CartItemModel, QAfterFilterCondition>
+      quantityBetween(
     int lower,
     int upper, {
     bool includeLower = true,
@@ -956,319 +1022,227 @@ extension CartItemQueryFilter
       ));
     });
   }
-
-  QueryBuilder<CartItem, CartItem, QAfterFilterCondition> totalPriceEqualTo(
-    double value, {
-    double epsilon = Query.epsilon,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'totalPrice',
-        value: value,
-        epsilon: epsilon,
-      ));
-    });
-  }
-
-  QueryBuilder<CartItem, CartItem, QAfterFilterCondition> totalPriceGreaterThan(
-    double value, {
-    bool include = false,
-    double epsilon = Query.epsilon,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'totalPrice',
-        value: value,
-        epsilon: epsilon,
-      ));
-    });
-  }
-
-  QueryBuilder<CartItem, CartItem, QAfterFilterCondition> totalPriceLessThan(
-    double value, {
-    bool include = false,
-    double epsilon = Query.epsilon,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'totalPrice',
-        value: value,
-        epsilon: epsilon,
-      ));
-    });
-  }
-
-  QueryBuilder<CartItem, CartItem, QAfterFilterCondition> totalPriceBetween(
-    double lower,
-    double upper, {
-    bool includeLower = true,
-    bool includeUpper = true,
-    double epsilon = Query.epsilon,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'totalPrice',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        epsilon: epsilon,
-      ));
-    });
-  }
 }
 
-extension CartItemQueryObject
-    on QueryBuilder<CartItem, CartItem, QFilterCondition> {}
+extension CartItemModelQueryObject
+    on QueryBuilder<CartItemModel, CartItemModel, QFilterCondition> {}
 
-extension CartItemQueryLinks
-    on QueryBuilder<CartItem, CartItem, QFilterCondition> {}
+extension CartItemModelQueryLinks
+    on QueryBuilder<CartItemModel, CartItemModel, QFilterCondition> {}
 
-extension CartItemQuerySortBy on QueryBuilder<CartItem, CartItem, QSortBy> {
-  QueryBuilder<CartItem, CartItem, QAfterSortBy> sortByImage() {
+extension CartItemModelQuerySortBy
+    on QueryBuilder<CartItemModel, CartItemModel, QSortBy> {
+  QueryBuilder<CartItemModel, CartItemModel, QAfterSortBy> sortByImage() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'image', Sort.asc);
     });
   }
 
-  QueryBuilder<CartItem, CartItem, QAfterSortBy> sortByImageDesc() {
+  QueryBuilder<CartItemModel, CartItemModel, QAfterSortBy> sortByImageDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'image', Sort.desc);
     });
   }
 
-  QueryBuilder<CartItem, CartItem, QAfterSortBy> sortByName() {
+  QueryBuilder<CartItemModel, CartItemModel, QAfterSortBy> sortByName() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'name', Sort.asc);
     });
   }
 
-  QueryBuilder<CartItem, CartItem, QAfterSortBy> sortByNameDesc() {
+  QueryBuilder<CartItemModel, CartItemModel, QAfterSortBy> sortByNameDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'name', Sort.desc);
     });
   }
 
-  QueryBuilder<CartItem, CartItem, QAfterSortBy> sortByPrice() {
+  QueryBuilder<CartItemModel, CartItemModel, QAfterSortBy> sortByPrice() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'price', Sort.asc);
     });
   }
 
-  QueryBuilder<CartItem, CartItem, QAfterSortBy> sortByPriceDesc() {
+  QueryBuilder<CartItemModel, CartItemModel, QAfterSortBy> sortByPriceDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'price', Sort.desc);
     });
   }
 
-  QueryBuilder<CartItem, CartItem, QAfterSortBy> sortByProductId() {
+  QueryBuilder<CartItemModel, CartItemModel, QAfterSortBy> sortByProductId() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'productId', Sort.asc);
     });
   }
 
-  QueryBuilder<CartItem, CartItem, QAfterSortBy> sortByProductIdDesc() {
+  QueryBuilder<CartItemModel, CartItemModel, QAfterSortBy>
+      sortByProductIdDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'productId', Sort.desc);
     });
   }
 
-  QueryBuilder<CartItem, CartItem, QAfterSortBy> sortByQuantity() {
+  QueryBuilder<CartItemModel, CartItemModel, QAfterSortBy> sortByQuantity() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'quantity', Sort.asc);
     });
   }
 
-  QueryBuilder<CartItem, CartItem, QAfterSortBy> sortByQuantityDesc() {
+  QueryBuilder<CartItemModel, CartItemModel, QAfterSortBy>
+      sortByQuantityDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'quantity', Sort.desc);
     });
   }
-
-  QueryBuilder<CartItem, CartItem, QAfterSortBy> sortByTotalPrice() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'totalPrice', Sort.asc);
-    });
-  }
-
-  QueryBuilder<CartItem, CartItem, QAfterSortBy> sortByTotalPriceDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'totalPrice', Sort.desc);
-    });
-  }
 }
 
-extension CartItemQuerySortThenBy
-    on QueryBuilder<CartItem, CartItem, QSortThenBy> {
-  QueryBuilder<CartItem, CartItem, QAfterSortBy> thenById() {
+extension CartItemModelQuerySortThenBy
+    on QueryBuilder<CartItemModel, CartItemModel, QSortThenBy> {
+  QueryBuilder<CartItemModel, CartItemModel, QAfterSortBy> thenById() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'id', Sort.asc);
     });
   }
 
-  QueryBuilder<CartItem, CartItem, QAfterSortBy> thenByIdDesc() {
+  QueryBuilder<CartItemModel, CartItemModel, QAfterSortBy> thenByIdDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'id', Sort.desc);
     });
   }
 
-  QueryBuilder<CartItem, CartItem, QAfterSortBy> thenByImage() {
+  QueryBuilder<CartItemModel, CartItemModel, QAfterSortBy> thenByImage() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'image', Sort.asc);
     });
   }
 
-  QueryBuilder<CartItem, CartItem, QAfterSortBy> thenByImageDesc() {
+  QueryBuilder<CartItemModel, CartItemModel, QAfterSortBy> thenByImageDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'image', Sort.desc);
     });
   }
 
-  QueryBuilder<CartItem, CartItem, QAfterSortBy> thenByName() {
+  QueryBuilder<CartItemModel, CartItemModel, QAfterSortBy> thenByName() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'name', Sort.asc);
     });
   }
 
-  QueryBuilder<CartItem, CartItem, QAfterSortBy> thenByNameDesc() {
+  QueryBuilder<CartItemModel, CartItemModel, QAfterSortBy> thenByNameDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'name', Sort.desc);
     });
   }
 
-  QueryBuilder<CartItem, CartItem, QAfterSortBy> thenByPrice() {
+  QueryBuilder<CartItemModel, CartItemModel, QAfterSortBy> thenByPrice() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'price', Sort.asc);
     });
   }
 
-  QueryBuilder<CartItem, CartItem, QAfterSortBy> thenByPriceDesc() {
+  QueryBuilder<CartItemModel, CartItemModel, QAfterSortBy> thenByPriceDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'price', Sort.desc);
     });
   }
 
-  QueryBuilder<CartItem, CartItem, QAfterSortBy> thenByProductId() {
+  QueryBuilder<CartItemModel, CartItemModel, QAfterSortBy> thenByProductId() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'productId', Sort.asc);
     });
   }
 
-  QueryBuilder<CartItem, CartItem, QAfterSortBy> thenByProductIdDesc() {
+  QueryBuilder<CartItemModel, CartItemModel, QAfterSortBy>
+      thenByProductIdDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'productId', Sort.desc);
     });
   }
 
-  QueryBuilder<CartItem, CartItem, QAfterSortBy> thenByQuantity() {
+  QueryBuilder<CartItemModel, CartItemModel, QAfterSortBy> thenByQuantity() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'quantity', Sort.asc);
     });
   }
 
-  QueryBuilder<CartItem, CartItem, QAfterSortBy> thenByQuantityDesc() {
+  QueryBuilder<CartItemModel, CartItemModel, QAfterSortBy>
+      thenByQuantityDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'quantity', Sort.desc);
     });
   }
-
-  QueryBuilder<CartItem, CartItem, QAfterSortBy> thenByTotalPrice() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'totalPrice', Sort.asc);
-    });
-  }
-
-  QueryBuilder<CartItem, CartItem, QAfterSortBy> thenByTotalPriceDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'totalPrice', Sort.desc);
-    });
-  }
 }
 
-extension CartItemQueryWhereDistinct
-    on QueryBuilder<CartItem, CartItem, QDistinct> {
-  QueryBuilder<CartItem, CartItem, QDistinct> distinctByImage(
+extension CartItemModelQueryWhereDistinct
+    on QueryBuilder<CartItemModel, CartItemModel, QDistinct> {
+  QueryBuilder<CartItemModel, CartItemModel, QDistinct> distinctByImage(
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'image', caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<CartItem, CartItem, QDistinct> distinctByName(
+  QueryBuilder<CartItemModel, CartItemModel, QDistinct> distinctByName(
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'name', caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<CartItem, CartItem, QDistinct> distinctByPrice() {
+  QueryBuilder<CartItemModel, CartItemModel, QDistinct> distinctByPrice() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'price');
     });
   }
 
-  QueryBuilder<CartItem, CartItem, QDistinct> distinctByProductId() {
+  QueryBuilder<CartItemModel, CartItemModel, QDistinct> distinctByProductId(
+      {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'productId');
+      return query.addDistinctBy(r'productId', caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<CartItem, CartItem, QDistinct> distinctByQuantity() {
+  QueryBuilder<CartItemModel, CartItemModel, QDistinct> distinctByQuantity() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'quantity');
     });
   }
-
-  QueryBuilder<CartItem, CartItem, QDistinct> distinctByTotalPrice() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'totalPrice');
-    });
-  }
 }
 
-extension CartItemQueryProperty
-    on QueryBuilder<CartItem, CartItem, QQueryProperty> {
-  QueryBuilder<CartItem, int, QQueryOperations> idProperty() {
+extension CartItemModelQueryProperty
+    on QueryBuilder<CartItemModel, CartItemModel, QQueryProperty> {
+  QueryBuilder<CartItemModel, int, QQueryOperations> idProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'id');
     });
   }
 
-  QueryBuilder<CartItem, String?, QQueryOperations> imageProperty() {
+  QueryBuilder<CartItemModel, String?, QQueryOperations> imageProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'image');
     });
   }
 
-  QueryBuilder<CartItem, String?, QQueryOperations> nameProperty() {
+  QueryBuilder<CartItemModel, String?, QQueryOperations> nameProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'name');
     });
   }
 
-  QueryBuilder<CartItem, double?, QQueryOperations> priceProperty() {
+  QueryBuilder<CartItemModel, double?, QQueryOperations> priceProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'price');
     });
   }
 
-  QueryBuilder<CartItem, int?, QQueryOperations> productIdProperty() {
+  QueryBuilder<CartItemModel, String?, QQueryOperations> productIdProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'productId');
     });
   }
 
-  QueryBuilder<CartItem, int, QQueryOperations> quantityProperty() {
+  QueryBuilder<CartItemModel, int, QQueryOperations> quantityProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'quantity');
-    });
-  }
-
-  QueryBuilder<CartItem, double, QQueryOperations> totalPriceProperty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'totalPrice');
     });
   }
 }
