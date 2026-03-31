@@ -56,6 +56,6 @@ Future<void> init() async {
   // Bloc (Factory use karein taake har dafa naya instance mile)
   sl.registerFactory(() => ProductBloc(repository: sl()));
   sl.registerFactory(() => CartBloc(repository: sl()));
-  sl.registerFactory(() => AuthBloc(remoteDS: sl(), tokenService: sl()));
+  sl.registerLazySingleton(() => AuthBloc(remoteDS: sl(), tokenService: sl()));
 
 }

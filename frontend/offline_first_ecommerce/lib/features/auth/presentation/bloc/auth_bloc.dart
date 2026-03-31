@@ -13,6 +13,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     
     // 1. Check Auto-Login (App start hone par)
     on<AppStarted>((event, emit) async {
+      print(  "AppStarted Event: Checking for existing token...");
+      emit(AuthLoading());
       final token = await tokenService.getAccessToken();
       if (token != null) {
         emit(Authenticated());

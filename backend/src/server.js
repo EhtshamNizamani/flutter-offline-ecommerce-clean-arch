@@ -18,7 +18,7 @@ app.use(express.json());
 
 // Routes
 app.use('/api/v1/auth', authRoutes);
-app.use('/api/v1/products', productRoutes); // Ye line check karein
+app.use('/api/v1/products', productRoutes);
 
 // Error Handler
 app.use(errorMiddleware);

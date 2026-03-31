@@ -7,7 +7,7 @@ class ApiService {
   final TokenService _tokenService;
 
   // Aapka backend URL (Localhost for Emulator)
-  static const String _baseUrl = 'http://192.168.100.70:3000/api/v1';
+  static const String _baseUrl = 'http://192.168.100.80:3000/api/v1';
 
   ApiService(this._dio, this._tokenService) {
     _dio.options.baseUrl = _baseUrl;
